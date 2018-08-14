@@ -10,11 +10,13 @@
                     <el-header class="header" height="50px">
                         <header-view/>
                     </el-header>
-                    <el-main>
-                        <keep-alive>
-                            <router-view></router-view>
-                        </keep-alive>
-                    </el-main>
+                    <el-scrollbar class="music-page scroll-page">
+                        <el-main>
+                            <keep-alive>
+                                <router-view></router-view>
+                            </keep-alive>
+                        </el-main>
+                    </el-scrollbar>
                 </el-container>
             </el-container>  
             <!-- 播放器 -->
@@ -40,6 +42,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.scroll-page {
+  overflow: hidden;
+  /deep/ .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
+}
+.music-page{
+    height: 680px;
+}
 .main {
   .aside {
     background: linear-gradient(to bottom, #efefef, #efefef);
@@ -55,7 +66,7 @@ export default {
     background: #f7f7f7;
   }
   .el-main {
-    padding: 20px 0px;
+    padding: 0px 0px 20px 0px;
   }
   .el-header {
     padding: 0px;

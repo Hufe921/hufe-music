@@ -1,13 +1,13 @@
 <template>
-<div class="container">
+<div class="music-container">
   <!-- 内容区 -->
-  <div class="content">
-    <h1>Hello Electron</h1>
-  </div>
+  <pre>{{searchResult}}</pre>
 </div>
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapState } = createNamespacedHelpers('home')
 export default {
   name: 'home',
   data () {
@@ -23,16 +23,16 @@ export default {
   methods: {
     async $_getSearch () {
     }
+  },
+  computed: {
+    ...mapState(['searchResult'])
   }
 }
 </script>
 
 <style lang='scss' scoped>
-.container {
-  height: 800px;
-  .content{
-    background: #fff;
-  }
+.music-container {
+  background: #fff;
   border: 1px solid red;
 }
 </style>

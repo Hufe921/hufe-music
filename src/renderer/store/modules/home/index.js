@@ -3,9 +3,15 @@ import $api from '../../../services/api'
 import $http from '../../../services/http/httpAxios'
 export default {
   namespaced: true,
-  state: {},
+  state: {
+    searchResult: ''
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    updateSearchResult (state, payload) {
+      state.searchResult = payload
+    }
+  },
   actions: {
     // 搜索
     getSearch ({
@@ -15,6 +21,7 @@ export default {
         $http($api.getSearch, payload).then(({
           data
         }) => {
+          commit('updateSearchResult', data)
           resolve(data)
         }).catch(({
           data

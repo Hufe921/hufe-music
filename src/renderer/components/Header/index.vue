@@ -66,10 +66,9 @@ export default {
           self.search &&
           document.activeElement === document.querySelector('.el-input__inner')
         ) {
-          console.log('hfue')
+          self.$store.dispatch('home/getSearch', { keywords: self.search })
         }
       }
-      // await this.$store.dispatch('getSearch',{keywords:'测试'})
     }
   }
 }
