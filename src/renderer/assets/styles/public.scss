@@ -1,0 +1,21 @@
+@import url('//at.alicdn.com/t/font_754618_49fnlvk2639.css');
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+.flex-c-c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-c-l {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+li{
+  list-style: none;
+}

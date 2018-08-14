@@ -11,16 +11,15 @@ export default {
 </script>
 
 <style lang='scss'>
-@import "./assets/css/normalize.css";
-* {
-  box-sizing: border-box;
-}
-html {
-  background: #f4f8fa;
-}
-#app {
-  font-family: "微软雅黑", "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import "./assets/styles/public.scss";
+@import "./assets/styles/normalize.css";
+body {
+  padding: 0;
+  margin: 0;
+  user-select: none;
+  height: 800px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 </style>

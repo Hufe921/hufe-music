@@ -7,7 +7,7 @@ import http from './services/http/httpAxios'
 import api from './services/api'
 import utils from './utils'
 
-import 'element-ui/lib/theme-chalk/index.css'
+import './assets/styles/theme.scss'
 import Element from 'element-ui'
 Vue.use(Element, {
   size: 'small'

@@ -1,9 +1,26 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import routes from './views'
 
 Vue.use(Router)
 
 export default new Router({
-  routes
+  routes: [
+    {
+      path: '/',
+      name: 'main',
+      redirect: { name: 'music' },
+      component: require('@/views/main').default,
+      children: [
+        {
+          path: 'music',
+          name: 'music',
+          component: () => import('../views/music/index.vue')
+        }
+      ]
+    },
+    {
+      path: '*',
+      redirect: '/'
+    }
+  ]
 })
