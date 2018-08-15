@@ -29,6 +29,38 @@ export default {
           reject(data)
         })
       })
+    },
+    // banner
+    getBanner ({
+      commit
+    }, payload) {
+      return new Promise((resolve, reject) => {
+        $http($api.getBanner, payload).then(({
+          data
+        }) => {
+          resolve(data)
+        }).catch(({
+          data
+        }) => {
+          reject(data)
+        })
+      })
+    },
+    // 推荐歌单
+    getPersonal ({
+      commit
+    }, payload) {
+      return new Promise((resolve, reject) => {
+        $http($api.getPersonal, payload).then(({
+          data
+        }) => {
+          resolve(data)
+        }).catch(({
+          data
+        }) => {
+          reject(data)
+        })
+      })
     }
   }
 }

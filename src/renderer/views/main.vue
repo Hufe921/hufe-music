@@ -49,7 +49,8 @@ export default {
   }
 }
 .music-page{
-    height: 680px;
+    height: 700px;
+    overflow: hidden;
 }
 .main {
   .aside {
@@ -66,7 +67,7 @@ export default {
     background: #f7f7f7;
   }
   .el-main {
-    padding: 0px 0px 20px 0px;
+    padding: 0px 0px 0px 0px;
   }
   .el-header {
     padding: 0px;

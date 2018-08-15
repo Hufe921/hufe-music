@@ -1,5 +1,4 @@
 @import url('//at.alicdn.com/t/font_754618_49fnlvk2639.css');
-
 .no-drag {
   -webkit-app-region: no-drag;
 }
@@ -16,6 +15,18 @@
   justify-content: flex-start;
 }
 
-li{
+li {
   list-style: none;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.hover-bg {
+  transition: background-color 0.3s linear
 }
