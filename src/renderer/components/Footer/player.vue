@@ -16,7 +16,7 @@
         <!-- 封面 -->
         <div class="player-cover">
            <img :src="cover"/>
-           <audio v-show="false" ref="audio"/>
+           <audio v-show="false" ref="audio" autoplay :src="src"/>
         </div>
         <!-- 音效 -->
         <div class="player-tone">
@@ -93,6 +93,7 @@ export default {
   data () {
     return {
       is_play: false,
+      src: require('@/assets/hufe.mp3'),
       cover:
         'http://p1.music.126.net/dPn_6T9d5VUuCDvhJdZ_8A==/109951163399691488.jpg'
     }
@@ -217,8 +218,8 @@ $height: 70px;
       color: #333;
       flex: 1;
     }
-    button:first-child{
-        margin-left: 5px;
+    button:first-child {
+      margin-left: 5px;
     }
     button:hover {
       color: #31c27c;
