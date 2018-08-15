@@ -18,6 +18,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.choiceness-view{
-}
 </style>
