@@ -5,7 +5,7 @@
             <el-button type="text">
                 <i class="iconfont icon-kuaitui"></i>
             </el-button>
-            <el-button class="play-btn" type="text">
+            <el-button class="play-btn" type="text" @click="is_play=!is_play">
                 <i class="iconfont icon-zanting" v-if="!is_play"></i>
                 <i class="iconfont icon-bofang" v-else></i>
             </el-button>
@@ -16,7 +16,7 @@
         <!-- 封面 -->
         <div class="player-cover">
            <img :src="cover"/>
-           <audio v-show="false" ref="audio" autoplay :src="src"/>
+           <audio v-show="false" ref="audio" :src="src"/>
         </div>
         <!-- 音效 -->
         <div class="player-tone">
@@ -62,11 +62,14 @@
                     <span class="music-singer-name"> - Hufe</span>
                 </div>
                 <div class="player-time">
-                    00:00 / 04:10
+                    {{play_time*1000|formatDuring}} / {{max_time*1000|formatDuring}}
                 </div>
             </div>
             <div class="player-progress">
-                <el-slider :show-tooltip="true" input-size="mini" :min="0"></el-slider>
+                <el-slider :show-tooltip="false" :format-tooltip="format_tooltip" v-model="play_time" input-size="mini" :min="0" 
+                :max="max_time" 
+                @change="playTimeChange">
+                </el-slider>
             </div>
         </div>
         <!-- 其他操作 -->
@@ -88,14 +91,70 @@
 </template>
 
 <script>
+import filters from '../../filters/index.js'
+const { ipcRenderer } = require('electron')
 export default {
   name: 'player',
   data () {
     return {
+      audio: null,
       is_play: false,
-      src: require('@/assets/hufe.mp3'),
+      max_time: 0,
+      play_time: 0,
+      interval: null,
+      src: '',
       cover:
         'http://p1.music.126.net/dPn_6T9d5VUuCDvhJdZ_8A==/109951163399691488.jpg'
+    }
+  },
+  mounted () {
+    let data = this.$_getConfig()
+    this.src =
+      data.address && data.address.length
+        ? `http://localhost:${data.port}/url=${data.address[0]}`
+        : ''
+  },
+  watch: {
+    is_play (val) {
+      this.audio = this.$refs['audio']
+      if (val) {
+        this.audio.play()
+        this.max_time = this.audio.duration
+        console.log(this.max_time)
+        this.getPlayTime()
+        this.audio.addEventListener('ended', () => {
+          console.log('hufe-zanting')
+          this.audio.pause()
+          clearInterval(this.interval)
+        })
+      } else {
+        this.audio.pause()
+        clearInterval(this.interval)
+      }
+    },
+    currentTime (val) {
+      this.play_time = val
+    }
+  },
+  methods: {
+    $_getConfig () {
+      return ipcRenderer.sendSync('get-config')
+    },
+    // 获取当前已播放时间
+    getPlayTime () {
+      this.interval = setInterval(() => {
+        this.play_time = this.audio.currentTime
+        console.log(this.play_time)
+      }, 1000)
+    },
+    // 改变播放时间
+    playTimeChange (val) {
+      this.audio.currentTime = val
+      this.play_time = this.audio.currentTime
+    },
+    format_tooltip (val) {
+      console.log('hfuehufehufe', val)
+      return filters.formatDuring(val * 1000)
     }
   }
 }

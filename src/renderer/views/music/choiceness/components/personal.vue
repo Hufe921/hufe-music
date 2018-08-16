@@ -40,7 +40,6 @@ export default {
   methods: {
     async $_getPersonal () {
       let data = await this.$store.dispatch('home/getPersonal')
-      console.log(data)
       this.personalized = data.code === 200 ? data.result : []
     }
   }

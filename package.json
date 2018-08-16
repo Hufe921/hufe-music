@@ -106,6 +106,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "^0.0.31",
     "karma-webpack": "^2.0.1",
+    "mediaserver": "^0.1.1",
     "mocha": "^3.0.2",
     "mockjs": "^1.0.1-beta3",
     "multispinner": "^0.2.1",
