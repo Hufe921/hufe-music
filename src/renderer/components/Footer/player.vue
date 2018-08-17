@@ -5,7 +5,7 @@
             <el-button type="text">
                 <i class="iconfont icon-kuaitui"></i>
             </el-button>
-            <el-button class="play-btn" type="text" @click="is_play=!is_play">
+            <el-button class="play-btn" type="text" @click="$_playClick">
                 <i class="iconfont icon-zanting" v-if="!is_play"></i>
                 <i class="iconfont icon-bofang" v-else></i>
             </el-button>
@@ -16,7 +16,7 @@
         <!-- 封面 -->
         <div class="player-cover">
            <img :src="cover"/>
-           <audio v-show="false" ref="audio" :src="src"/>
+           <audio v-show="false" ref="audio" v-if="play_url" :src="play_url" preload/>
         </div>
         <!-- 音效 -->
         <div class="player-tone">
@@ -58,16 +58,16 @@
         <div class="player-info">
             <div class="player-info-top">
                 <div class="player-name">
-                    <span class="music-name">Hufe的歌</span>
-                    <span class="music-singer-name"> - Hufe</span>
+                    <span class="music-name">{{name}}</span>
+                    <span class="music-singer-name"> - {{ar_name}}</span>
                 </div>
                 <div class="player-time">
-                    {{play_time*1000|formatDuring}} / {{max_time*1000|formatDuring}}
+                    {{play_time*1000|formatDuring}} / {{song.dt|formatDuring}}
                 </div>
             </div>
             <div class="player-progress">
-                <el-slider :show-tooltip="false" :format-tooltip="format_tooltip" v-model="play_time" input-size="mini" :min="0" 
-                :max="max_time" 
+                <el-slider :show-tooltip="false" v-model="play_time" input-size="mini" :min="0" 
+                :max="song.dt/1000" 
                 @change="playTimeChange">
                 </el-slider>
             </div>
@@ -91,70 +91,100 @@
 </template>
 
 <script>
-import filters from '../../filters/index.js'
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapMutations } = createNamespacedHelpers('home')
 const { ipcRenderer } = require('electron')
 export default {
   name: 'player',
   data () {
     return {
       audio: null,
-      is_play: false,
-      max_time: 0,
       play_time: 0,
       interval: null,
-      src: '',
-      cover:
-        'http://p1.music.126.net/dPn_6T9d5VUuCDvhJdZ_8A==/109951163399691488.jpg'
+      src: ''
     }
   },
   mounted () {
-    let data = this.$_getConfig()
-    this.src =
-      data.address && data.address.length
-        ? `http://localhost:${data.port}/url=${data.address[0]}`
-        : ''
+    // 本地播放
+    // let data = this.$_getConfig()
+    // this.src =
+    //   data.address && data.address.length
+    //     ? `http://localhost:${data.port}/url=${data.address[0]}`
+    //     : ''
   },
   watch: {
     is_play (val) {
-      this.audio = this.$refs['audio']
-      if (val) {
-        this.audio.play()
-        this.max_time = this.audio.duration
-        console.log(this.max_time)
-        this.getPlayTime()
-        this.audio.addEventListener('ended', () => {
-          console.log('hufe-zanting')
+      this.$nextTick(() => {
+        this.audio = this.$refs['audio']
+        if (val) {
+          this.audio.play()
+          this.getPlayTime()
+          this.audio.addEventListener('ended', () => {
+            console.log('播放结束')
+            this.audio.pause()
+            clearInterval(this.interval)
+          })
+        } else {
           this.audio.pause()
           clearInterval(this.interval)
-        })
-      } else {
-        this.audio.pause()
-        clearInterval(this.interval)
-      }
+        }
+      })
     },
     currentTime (val) {
       this.play_time = val
     }
   },
   methods: {
+    // 本地播放
     $_getConfig () {
       return ipcRenderer.sendSync('get-config')
+    },
+    // 播放or暂停
+    $_playClick () {
+      this.SET_PLAYER_DATA({ is_play: !this.is_play })
     },
     // 获取当前已播放时间
     getPlayTime () {
       this.interval = setInterval(() => {
-        this.play_time = this.audio.currentTime
-        console.log(this.play_time)
+        this.SET_PLAYER_DATA({ currentTime: this.audio.currentTime })
       }, 1000)
     },
     // 改变播放时间
     playTimeChange (val) {
       this.audio.currentTime = val
-      this.play_time = this.audio.currentTime
+      this.SET_PLAYER_DATA({ currentTime: this.audio.currentTime })
     },
-    format_tooltip (val) {
-      console.log('hfuehufehufe', val)
-      return filters.formatDuring(val * 1000)
+    // vuex方法
+    ...mapMutations(['SET_PLAYER_DATA'])
+  },
+  computed: {
+    ...mapState(['is_play', 'currentTime', 'song']),
+    play_url () {
+      let url = this.song.id
+        ? `http://music.163.com/song/media/outer/url?id=${this.song.id}.mp3`
+        : false
+      return url
+    },
+    cover () {
+      try {
+        return this.song.al.picUrl
+      } catch (e) {
+        return 'http://p1.music.126.net/dPn_6T9d5VUuCDvhJdZ_8A==/109951163399691488.jpg'
+      }
+    },
+    name () {
+      try {
+        return this.song.name || 'Hufe'
+      } catch (e) {
+        return 'Hufe'
+      }
+    },
+    ar_name () {
+      try {
+        return this.song.ar[0].name
+      } catch (e) {
+        return 'music'
+      }
     }
   }
 }

@@ -2,10 +2,10 @@
     <div class="header-container">
         <!-- 搜索，返回等操作 -->
         <div class="header-left">
-            <el-button class="no-drag" size="mini" type="text">
+            <el-button class="no-drag" size="mini" type="text" @click="back">
                 <i class="btn el-icon-arrow-left"></i>
             </el-button>
-            <el-button class="no-drag" size="mini" type="text">
+            <el-button class="no-drag" size="mini" type="text" @click="advance">
                 <i class="btn el-icon-arrow-right"></i>
             </el-button>
             <el-button class="no-drag hover-color" size="mini" type="text">
@@ -53,6 +53,14 @@ export default {
     },
     minimize () {
       this.$electron.ipcRenderer.send('minimize')
+    },
+    back () {
+      if (this.$route.name !== 'music') {
+        this.$router.go(-1)
+      }
+    },
+    advance () {
+      this.$router.go(1)
     },
     // 搜索
     $_search () {

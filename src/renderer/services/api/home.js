@@ -13,6 +13,16 @@ const homeModule = {
   getPersonal: {
     url: 'personalized',
     method: 'get'
+  },
+  // 获取歌单详情
+  getPlaylistDetail: {
+    url: 'playlist/detail',
+    method: 'get'
+  },
+  // 获取歌曲详情
+  getSongDetail: {
+    url: 'song/detail',
+    method: 'get'
   }
 }
 export default homeModule

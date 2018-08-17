@@ -1,5 +1,5 @@
 <template>
-    <div class="personal-item-container">
+    <div class="personal-item-container" @click="$_into_detail">
         <div class="cover">
             <img :src="item.picUrl"/>
             <!-- 遮罩和播放按钮 -->
@@ -23,6 +23,11 @@ export default {
   name: 'personal-item',
   props: {
     item: Object
+  },
+  methods: {
+    $_into_detail () {
+      this.$router.push({name: 'playlist', query: {id: this.item.id}})
+    }
   }
 }
 </script>

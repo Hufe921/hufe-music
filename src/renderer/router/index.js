@@ -15,6 +15,11 @@ export default new Router({
           path: 'music',
           name: 'music',
           component: () => import('../views/music/index.vue')
+        },
+        {
+          path: 'playlist',
+          name: 'playlist',
+          component: () => import('../views/playlist/index.vue')
         }
       ]
     },
