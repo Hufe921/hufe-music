@@ -3,38 +3,26 @@
         <div class="play-table-top">
             <div class="title">播放队列</div>
             <div class="p-table-grid">
-                <div class="action-item">30首歌曲</div>
+                <div class="action-item">{{playlist.length}}首歌曲</div>
                 <div class="action-item"><i class="iconfont icon-piliangchuli"></i>批量操作</div>
                 <div class="action-item"><i class="iconfont icon-qingkong"></i>清空</div>
             </div>
         </div>
         <el-scrollbar class="play-table-list scroll-page">
-          <div class="song-item">
+            <div class="song-item" v-for="(item,index) in playlist" :key="index" :class="{'active':song.id===item.id}">
                 <div class="name">
-                    这是一个名字很长很长很长很长的歌曲名字
+                    {{item.name}}
                     <img class="tag" src="../../assets/images/sq.png"/>
-                    <img class="tag" src="../../assets/images/mv.png"/>
-                    <div class="spin"><i class="iconfont icon-yinleren"></i></div>
+                    <img v-if="item.mv>0" class="tag" src="../../assets/images/mv.png"/>
+                    <div class="spin" v-show="song.id===item.id"><i class="iconfont icon-yinleren"></i></div>
                 </div>
                 <div class="info" >
-                    <div class="singer">Hufe</div>
-                    <div class="time">05:30</div>
+                    <div class="singer">{{item.ar[0].name}}</div>
+                    <div class="time">{{item.dt|formatDuring}}</div>
                 </div>
                 <div class="icon">
-                  <i class="iconfont icon-bofangsanjiaoxing"></i>
+                  <i class="iconfont icon-bofangsanjiaoxing" :class="{'icon-zanting1':item.id===song.id}" @click="playMusic(item.id)"></i>
                   <i class="iconfont icon-shoucang"></i>
-                </div>
-            </div>
-            <div class="song-item" v-for="item in 20" :key="item">
-                <div class="name">
-                    Hufe-music
-                    <img class="tag" src="../../assets/images/sq.png"/>
-                    <img class="tag" src="../../assets/images/mv.png"/>
-                    <div class="spin"><i class="iconfont icon-yinleren"></i></div>
-                </div>
-                <div class="info" >
-                    <div class="singer">Hufe</div>
-                    <div class="time">05:30</div>
                 </div>
             </div>
         </el-scrollbar>
@@ -42,8 +30,21 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
+const { mapState, mapActions } = createNamespacedHelpers('home')
 export default {
-  name: 'play-table'
+  name: 'play-table',
+  watch: {
+    playlist () {
+      console.log(this.playlist)
+    }
+  },
+  methods: {
+    ...mapActions(['playMusic'])
+  },
+  computed: {
+    ...mapState(['playlist', 'song'])
+  }
 }
 </script>
 
@@ -90,7 +91,9 @@ export default {
       padding: 10px 20px;
       position: relative;
       border-bottom: 1px #f4f4f4 solid;
-      &:hover,&:hover .icon {
+      &:hover,
+      &:hover .icon {
+        opacity: 1;
         background-color: #f8f8f8 !important;
       }
       .name {
@@ -133,6 +136,7 @@ export default {
         right: 0;
         bottom: 0;
         position: absolute;
+        opacity: 0;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -147,6 +151,21 @@ export default {
           }
         }
       }
+    }
+  }
+  .active {
+    background-color: #f8f8f8;
+    .name {
+      color: #31c27c;
+    }
+    .info {
+      .singer {
+        color: #31c27c !important;
+      }
+    }
+    .icon {
+      opacity: 1 !important;
+      background-color: #f8f8f8 !important;
     }
   }
 }

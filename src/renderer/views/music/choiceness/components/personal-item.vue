@@ -4,7 +4,7 @@
             <img :src="item.picUrl"/>
             <!-- 遮罩和播放按钮 -->
             <div class="bg hover-bg">
-                <i class="iconfont icon-iconset0481" onClick="event.cancelBubble = true"></i>
+                <i class="iconfont icon-iconset0481" onClick="event.cancelBubble = true" @click="$_play_list"></i>
             </div>
             <!-- 播放量统计 -->
             <div class="play-count">
@@ -27,6 +27,9 @@ export default {
   methods: {
     $_into_detail () {
       this.$router.push({name: 'playlist', query: {id: this.item.id}})
+    },
+    $_play_list () {
+      this.$store.dispatch('home/playList', this.item.id)
     }
   }
 }

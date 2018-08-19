@@ -7,7 +7,8 @@ export default {
     searchResult: '',
     is_play: false,
     currentTime: 0,
-    song: {}
+    song: {},
+    playlist: []
   },
   getters: {},
   mutations: {
@@ -19,15 +20,26 @@ export default {
       Object.keys(payload).forEach(key => {
         state[key] = payload[key]
       })
+    },
+    // 设置播放列表
+    SET_PLAYER_LIST (state, payload) {
+      state.playlist = payload
     }
   },
   actions: {
+    // 播放音乐
     playMusic ({commit}, ids) {
       commit('SET_PLAYER_DATA', {is_play: false, currentTime: 0})
       $http($api.getSongDetail, {ids}).then(res => {
         commit('SET_PLAYER_DATA', {song: res.data.songs[0]})
         commit('SET_PLAYER_DATA', {is_play: true})
       })
+    },
+    // 播放歌单
+    async playList ({dispatch, commit}, id) {
+      let data = await dispatch('getPlaylistDetail', {id})
+      let list = data.code === 200 ? data.playlist.tracks : []
+      commit('SET_PLAYER_LIST', list)
     },
     // 搜索
     getSearch ({

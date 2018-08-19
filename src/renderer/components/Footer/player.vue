@@ -2,14 +2,14 @@
     <div class="player-container">
         <!-- 控制区 -->
         <div class="player-control">
-            <el-button type="text">
+            <el-button type="text" @click="playBefore">
                 <i class="iconfont icon-kuaitui"></i>
             </el-button>
             <el-button class="play-btn" type="text" @click="$_playClick">
                 <i class="iconfont icon-zanting" v-if="!is_play"></i>
                 <i class="iconfont icon-bofang" v-else></i>
             </el-button>
-            <el-button type="text">
+            <el-button type="text" @click="playAfter">
                 <i class="iconfont icon-kuaijin"></i>
             </el-button>
         </div>
@@ -62,7 +62,7 @@
                     <span class="music-singer-name"> - {{ar_name}}</span>
                 </div>
                 <div class="player-time">
-                    {{play_time*1000|formatDuring}} / {{song.dt|formatDuring}}
+                    {{play_time*1000|formatDuring}} / {{song.dt-60|formatDuring}}
                 </div>
             </div>
             <div class="player-progress">
@@ -101,7 +101,7 @@
 <script>
 import PlayTable from '../Aside/playtable'
 import { createNamespacedHelpers } from 'vuex'
-const { mapState, mapMutations } = createNamespacedHelpers('home')
+const { mapState, mapMutations, mapActions } = createNamespacedHelpers('home')
 const { ipcRenderer } = require('electron')
 export default {
   name: 'player',
@@ -132,9 +132,7 @@ export default {
           this.audio.play()
           this.getPlayTime()
           this.audio.addEventListener('ended', () => {
-            console.log('播放结束')
-            this.audio.pause()
-            clearInterval(this.interval)
+            this.playEnd()
           })
         } else {
           this.audio.pause()
@@ -166,11 +164,28 @@ export default {
       this.audio.currentTime = val
       this.SET_PLAYER_DATA({ currentTime: this.audio.currentTime })
     },
+    playEnd () {
+      console.log('播放结束')
+      clearInterval(this.interval)
+      this.playAfter()
+    },
+    playBefore () {
+      if (this.before_song) {
+        this.playMusic(this.before_song.id)
+      }
+    },
+    playAfter () {
+      console.log(this.after_song)
+      if (this.after_song) {
+        this.playMusic(this.after_song.id)
+      }
+    },
     // vuex方法
-    ...mapMutations(['SET_PLAYER_DATA'])
+    ...mapMutations(['SET_PLAYER_DATA']),
+    ...mapActions(['playMusic'])
   },
   computed: {
-    ...mapState(['is_play', 'currentTime', 'song']),
+    ...mapState(['is_play', 'currentTime', 'song', 'playlist']),
     play_url () {
       let url = this.song.id
         ? `http://music.163.com/song/media/outer/url?id=${this.song.id}.mp3`
@@ -197,6 +212,24 @@ export default {
       } catch (e) {
         return 'music'
       }
+    },
+    before_song () {
+      let sindex = -1
+      this.playlist.map((item, index) => {
+        if (this.song.id === item.id && index > 0) {
+          sindex = index - 1
+        }
+      })
+      return sindex >= 0 ? this.playlist[sindex] : false
+    },
+    after_song () {
+      let sindex = -1
+      this.playlist.map((item, index) => {
+        if (this.song.id === item.id && index < this.playlist.length - 1) {
+          sindex = index + 1
+        }
+      })
+      return sindex >= 0 ? this.playlist[sindex] : false
     }
   }
 }
