@@ -83,14 +83,23 @@
             <el-button type="text">
                 <i class="iconfont icon-shengyin"></i>
             </el-button>
-            <el-button type="text">
+            <el-popover
+              placement="top"
+              width="300"
+              trigger="click"
+              popper-class="ls"
+              content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+              <play-table/>
+              <el-button type="text" slot="reference">
                 <i class="iconfont icon-liebiao"></i>
-            </el-button>
+              </el-button>
+            </el-popover>
         </div>
     </div>
 </template>
 
 <script>
+import PlayTable from '../Aside/playtable'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapMutations } = createNamespacedHelpers('home')
 const { ipcRenderer } = require('electron')
@@ -103,6 +112,9 @@ export default {
       interval: null,
       src: ''
     }
+  },
+  components: {
+    PlayTable
   },
   mounted () {
     // 本地播放
