@@ -5,7 +5,7 @@
             <div class="menu-item active"><i class="iconfont icon-yinle"></i>音乐馆</div>
             <div class="menu-item"><i class="iconfont icon-mv"></i>MV</div>
             <div class="menu-item"><i class="iconfont icon-diantai"></i>个性电台</div>
-            <div class="menu-item"><i class="iconfont icon-shoucang2"></i>明日之子第二季</div>
+            <div class="menu-item" @click="$_print"><i class="iconfont icon-shoucang2"></i>打印测试</div>
        </div>
 
        <div class="menu-group">
@@ -39,8 +39,14 @@
 </template>
 
 <script>
+
 export default {
-  name: 'aside-menu'
+  name: 'aside-menu',
+  methods: {
+    $_print () {
+      console.log(this.$electron.remote.webContents.getFocusedWebContents().getPrinters())
+    }
+  }
 }
 </script>
 
