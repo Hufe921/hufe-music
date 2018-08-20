@@ -55,3 +55,24 @@ li {
 .ls {
   padding: 0;
 }
+
+.volume {
+  padding: 10px 0;
+  width: 25px !important;
+}
+
+.volume.el-popover {
+  min-width: auto;
+  .el-slider.is-vertical .el-slider__runway {
+    width: 5px;
+    margin: 0 2px;
+  }
+  .el-slider__button {
+    width: 8px;
+    height: 8px;
+    border: solid 1px #31c27c
+  }
+  .el-slider.is-vertical {
+    left: 8px;
+  }
+}

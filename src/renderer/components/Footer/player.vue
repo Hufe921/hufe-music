@@ -16,7 +16,7 @@
         <!-- 封面 -->
         <div class="player-cover">
            <img :src="cover"/>
-           <audio v-show="false" ref="audio" v-if="play_url" :src="play_url" preload/>
+           <audio v-show="false" ref="audio" v-if="play_url" :src="play_url" preload volume="50"/>
         </div>
         <!-- 音效 -->
         <div class="player-tone">
@@ -80,15 +80,28 @@
             <el-button type="text">
                 <i class="iconfont icon-liebiaoxunhuan"></i>
             </el-button>
-            <el-button type="text">
+            <!-- 音量 -->
+            <el-popover
+              placement="top"
+              width="150"
+              trigger="click"
+              popper-class="ls volume">
+              <el-slider
+                v-model="volume"
+                @change="$_change_volume"
+                vertical
+                height="120px">
+              </el-slider>
+              <el-button type="text" slot="reference">
                 <i class="iconfont icon-shengyin"></i>
-            </el-button>
+              </el-button>
+            </el-popover>
+            <!-- 歌单列表 -->
             <el-popover
               placement="top"
               width="300"
               trigger="click"
-              popper-class="ls"
-              content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+              popper-class="ls">
               <play-table/>
               <el-button type="text" slot="reference">
                 <i class="iconfont icon-liebiao"></i>
@@ -110,7 +123,8 @@ export default {
       audio: null,
       play_time: 0,
       interval: null,
-      src: ''
+      src: '',
+      volume: 50
     }
   },
   components: {
@@ -145,6 +159,10 @@ export default {
     }
   },
   methods: {
+    // 音量调整
+    $_change_volume () {
+      this.audio.volume = this.volume / 100
+    },
     // 本地播放
     $_getConfig () {
       return ipcRenderer.sendSync('get-config')
@@ -348,9 +366,12 @@ $height: 70px;
     width: 200px;
     display: flex;
     justify-content: space-around;
-    button {
+    button,
+    span {
       color: #333;
       flex: 1;
+      margin-left: 5px;
+      text-align: center;
     }
     button:first-child {
       margin-left: 5px;
