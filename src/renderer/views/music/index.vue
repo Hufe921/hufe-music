@@ -77,9 +77,9 @@ export default {
       overflow-x: hidden;
     }
   }
-  .music-main-view{
-      height: 635px;
-      overflow: hidden;
+  .music-main-view {
+    height: 635px;
+    overflow: hidden;
   }
 }
 </style>
