@@ -39,12 +39,38 @@
 </template>
 
 <script>
-
+// const fs = require('fs')
 export default {
   name: 'aside-menu',
   methods: {
     $_print () {
-      console.log(this.$electron.remote.webContents.getFocusedWebContents().getPrinters())
+      // 系统自带打印管理工具
+      this.$electron.remote.webContents
+        .getFocusedWebContents()
+        .print(
+          { silent: false, printBackground: true, deviceName: '' },
+          function () {
+            console.log('完成')
+          }
+        )
+
+      // 使用window对象方法
+      // window.print()
+
+      // 页面转pdf预览
+      // this.$electron.remote.webContents
+      //   .getFocusedWebContents()
+      //   .printToPDF(
+      //     { marginsType: 0, pageSize: 'A4', printBackground: true, printSelectionOnly: false, landscape: true },
+      //     (error, data) => {
+      //       if (error) throw error
+      //       fs.writeFile('./test.pdf', data, (error) => {
+      //         if (error) throw error
+      //         console.log('Write PDF successfully.')
+      //       })
+      //       console.log('完成')
+      //     }
+      //   )
     }
   }
 }

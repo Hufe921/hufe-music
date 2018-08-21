@@ -115,7 +115,6 @@
 import PlayTable from '../Aside/playtable'
 import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapMutations, mapActions } = createNamespacedHelpers('home')
-const { ipcRenderer } = require('electron')
 export default {
   name: 'player',
   data () {
@@ -137,6 +136,9 @@ export default {
     //   data.address && data.address.length
     //     ? `http://localhost:${data.port}/url=${data.address[0]}`
     //     : ''
+
+    // 监视主程序播放相关命令
+    this.$_watch_play()
   },
   watch: {
     is_play (val) {
@@ -145,6 +147,7 @@ export default {
         if (val) {
           this.audio.play()
           this.getPlayTime()
+          this.$_change_menu()
           this.audio.addEventListener('ended', () => {
             this.playEnd()
           })
@@ -159,13 +162,35 @@ export default {
     }
   },
   methods: {
+    // 监听主程序播放有关命令
+    $_watch_play () {
+      this.$electron.ipcRenderer.on('play_shell', (event, arg) => {
+        // 播放或暂停
+        switch (arg.status) {
+          case 1:
+            this.$_playClick()
+            break
+          case 2:
+            this.playBefore()
+            break
+          case 3:
+            this.playAfter()
+            break
+        }
+        this.$_change_menu()
+      })
+    },
+    // 发送有关播放器参数
+    $_change_menu () {
+      this.$electron.ipcRenderer.send('change_menu', {is_play: this.is_play, song: this.song})
+    },
     // 音量调整
     $_change_volume () {
       this.audio.volume = this.volume / 100
     },
     // 本地播放
     $_getConfig () {
-      return ipcRenderer.sendSync('get-config')
+      return this.$electron.ipcRenderer.sendSync('get-config')
     },
     // 播放or暂停
     $_playClick () {
