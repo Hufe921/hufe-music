@@ -40,6 +40,9 @@ export default {
       let data = await dispatch('getPlaylistDetail', {id})
       let list = data.code === 200 ? data.playlist.tracks : []
       commit('SET_PLAYER_LIST', list)
+      if (list.length) {
+        dispatch('playMusic', list[0].id)
+      }
     },
     // 搜索
     getSearch ({

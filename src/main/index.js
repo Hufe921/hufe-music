@@ -116,19 +116,17 @@ function menuClick (arg) {
   mainWindow.webContents.send('play_shell', {status: arg})
 }
 
-// 接收渲染进程有关播放器的信息
+// 接收渲染进程有关播放器的信息-暂时不可用
 ipcMain.on('change_menu', (event, arg) => {
-  console.log(contextMenu.items[2])
-  if (arg.is_play) {
-    console.log('dede')
-    contextMenu.items[2].label = '暂停2'
-    // contextMenu.items[2].icon = formatImg('pause.png')
-    tray.setContextMenu(contextMenu)
-    console.log(contextMenu.items[2])
-  }
-  if (arg.song.id) {
-    contextMenu.items[0].label = arg.song.name.length > 10 ? arg.song.name.substring(0, 10) + '...' : arg.song.name
-  }
+  // if (arg.is_play) {
+  //   contextMenu.items[2].label = '暂停2'
+  //   contextMenu.items[2].icon = formatImg('pause.png')
+  //   tray.setContextMenu(contextMenu)
+  //   console.log(contextMenu.items[2])
+  // }
+  // if (arg.song.id) {
+  //   contextMenu.items[0].label = arg.song.name.length > 10 ? arg.song.name.substring(0, 10) + '...' : arg.song.name
+  // }
   event.returnValue = 200
 })
 
