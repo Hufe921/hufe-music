@@ -74,8 +74,43 @@ ipcMain.on('minimize', e => {
 })
 
 // 系统托盘
-let contextMenu = null
 let tray = null
+let trayMenu = [{
+  label: 'hufe-music'
+},
+{
+  type: 'separator'
+},
+{
+  label: '暂停',
+  icon: formatImg('pause.png'),
+  click () {
+    menuClick(1)
+  }
+},
+{
+  label: '上一首',
+  icon: formatImg('before.png'),
+  click () {
+    menuClick(2)
+  }
+},
+{
+  label: '下一首',
+  icon: formatImg('after.png'),
+  click () {
+    menuClick(3)
+  }
+},
+{
+  type: 'separator'
+},
+{
+  label: '退出程序',
+  role: 'quit',
+  icon: formatImg('logout.png')
+}
+]
 app.on('ready', () => {
   tray = new Tray(icon)
   // 点击托盘区显示应用
@@ -83,50 +118,26 @@ app.on('ready', () => {
     mainWindow.isMinimized() ? mainWindow.show() : mainWindow.minimize()
   })
   // 托盘区餐单功能
-  contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'hufe-music'
-    },
-    {
-      type: 'separator'
-    },
-    {label: '暂停',
-      icon: formatImg('pause.png'),
-      click () {
-        menuClick(1)
-      }},
-    {label: '上一首',
-      icon: formatImg('before.png'),
-      click () {
-        menuClick(2)
-      }},
-    {label: '下一首',
-      icon: formatImg('after.png'),
-      click () {
-        menuClick(3)
-      }},
-    {type: 'separator'},
-    {label: '退出程序', role: 'quit', icon: formatImg('logout.png')}])
+  let contextMenu = Menu.buildFromTemplate(trayMenu)
   tray.setToolTip('hufe-music')
   tray.setContextMenu(contextMenu)
 })
 
 // 向渲染程序发送控制播放器命令
 function menuClick (arg) {
-  mainWindow.webContents.send('play_shell', {status: arg})
+  mainWindow.webContents.send('play_shell', {
+    status: arg
+  })
 }
 
-// 接收渲染进程有关播放器的信息-暂时不可用
+// 接收渲染进程有关播放器的信息
 ipcMain.on('change_menu', (event, arg) => {
-  // if (arg.is_play) {
-  //   contextMenu.items[2].label = '暂停2'
-  //   contextMenu.items[2].icon = formatImg('pause.png')
-  //   tray.setContextMenu(contextMenu)
-  //   console.log(contextMenu.items[2])
-  // }
-  // if (arg.song.id) {
-  //   contextMenu.items[0].label = arg.song.name.length > 10 ? arg.song.name.substring(0, 10) + '...' : arg.song.name
-  // }
+  trayMenu[2].label = arg.is_play ? '暂停' : '播放'
+  trayMenu[2].icon = arg.is_play ? formatImg('pause.png') : formatImg('play.png')
+  if (arg.song.id) {
+    trayMenu[0].label = arg.song.name.length > 8 ? arg.song.name.substring(0, 8) + '...' : arg.song.name
+  }
+  tray.setContextMenu(Menu.buildFromTemplate(trayMenu))
   event.returnValue = 200
 })
 
@@ -134,7 +145,10 @@ ipcMain.on('change_menu', (event, arg) => {
 function formatImg (name) {
   let url = path.join(__dirname, '../../build/icons/' + name)
   let result = nativeImage.createFromPath(url)
-  return result.resize({width: 18, height: 18})
+  return result.resize({
+    width: 18,
+    height: 18
+  })
 }
 
 // 读取本地配置
