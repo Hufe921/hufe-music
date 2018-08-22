@@ -5,7 +5,8 @@ const {
   ipcMain,
   Menu,
   Tray,
-  nativeImage
+  nativeImage,
+  Notification
 } = require('electron')
 const ms = require('mediaserver')
 const fs = require('fs')
@@ -235,6 +236,17 @@ function notFound (res) {
   res.end('not found')
 }
 
+// 桌面通知
+ipcMain.on('notification', (e) => {
+  let notification = new Notification({
+    title: 'cesh2i',
+    body: '正文',
+    icon
+  })
+  console.log(Notification.isSupported())
+  notification.show()
+  e.returnValue = 200
+})
 /**
  * Auto Updater
  *

@@ -4,7 +4,7 @@
             <div class="menu-title">在线音乐</div>
             <div class="menu-item active"><i class="iconfont icon-yinle"></i>音乐馆</div>
             <div class="menu-item"><i class="iconfont icon-mv"></i>MV</div>
-            <div class="menu-item"><i class="iconfont icon-diantai"></i>个性电台</div>
+            <div class="menu-item" @click="$_notification"><i class="iconfont icon-diantai"></i>通知测试</div>
             <div class="menu-item" @click="$_print"><i class="iconfont icon-shoucang2"></i>打印测试</div>
        </div>
 
@@ -43,6 +43,25 @@
 export default {
   name: 'aside-menu',
   methods: {
+    // 通知测试--html5的原生标签暂时无法使用
+    $_notification () {
+      // let notice = new Notification('状态更新提醒', {
+      //   body: '你的朋友圈有3条新状态，快去查看吧',
+      //   tag: 'linxin', // 区别各通知标签，如果一样将只会出现一条通知
+      //   data: {
+      //     // 通知携带的信息
+      //     url: 'https://www.baidu.com'
+      //   },
+      //   icon: 'http://blog.gdfengshuo.com/images/avatar.jpg',
+      //   requireInteraction: false
+      // })
+      // notice.onclick = function () {
+      //   window.open(notice.data.url, '_blank') // 打开网址
+      //   notice.close() // 并且关闭通知
+      // }
+      this.$electron.ipcRenderer.send('notification')
+    },
+    // 打印测试
     $_print () {
       // 系统自带打印管理工具
       this.$electron.remote.webContents
