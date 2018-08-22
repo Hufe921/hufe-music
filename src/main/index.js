@@ -6,7 +6,8 @@ const {
   Menu,
   Tray,
   nativeImage,
-  Notification
+  Notification,
+  autoUpdater
 } = require('electron')
 const ms = require('mediaserver')
 const fs = require('fs')
@@ -247,22 +248,53 @@ ipcMain.on('notification', (e) => {
   notification.show()
   e.returnValue = 200
 })
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
 
-/*
-          import { autoUpdater } from 'electron-updater'
+// 自动更新-使用开源项目
+// require('update-electron-app')({
+//   repo: 'Hufe921/hufe-music',
+//   updateInterval: '5 minutes',
+//   logger: require('electron-log')
+// })
+const server = 'https://update.electronjs.org'
+const feed = `${server}/Hufe921/hufe-music/${process.platform}/${app.getVersion()}`
+console.log(feed)
+autoUpdater.setFeedURL(feed)
+autoUpdater.on('checking-for-update', () => {
+  console.log('开始检查')
+})
 
-          autoUpdater.on('update-downloaded', () => {
-            autoUpdater.quitAndInstall()
-          })
+autoUpdater.on('error', (error) => {
+  console.log(error)
+})
 
-          app.on('ready', () => {
-            if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-          })
-           */
+autoUpdater.on('update-available', () => {
+  console.log('available')
+})
+
+autoUpdater.on('update-not-available', () => {
+  console.log('not-available')
+})
+
+autoUpdater.on('update-downloaded', (data) => {
+  console.log(data)
+})
+
+// /**
+//  * Auto Updater
+//  *
+//  * Uncomment the following code below and install `electron-updater` to
+//  * support auto updating. Code Signing with a valid certificate is required.
+//  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
+//  */
+
+// const { autoUpdater } = require('electron-updater')
+
+// autoUpdater.on('update-downloaded', () => {
+//   // autoUpdater.quitAndInstall()
+//   console.log('下载完成')
+// })
+
+// app.on('ready', () => {
+//   // if (process.env.NODE_ENV === 'production')
+//   autoUpdater.checkForUpdates()
+// })
