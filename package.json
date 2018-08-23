@@ -1,8 +1,8 @@
 {
   "name": "hufe-music",
-  "version": "0.2.0",
+  "version": "v0.3.0",
   "author": "Hufe921 <huangyunfeihufe@hotmail.com>",
-  "description": "An electron-vue project",
+  "description": "NetEase cloud music client powered by electron",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -22,6 +22,11 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
+    "publish": [{
+      "provider": "github",
+      "owner": "Hufe921",
+      "repo": "hufe-music"
+    }],
     "productName": "hufe-music",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
@@ -31,8 +36,7 @@
       "dist/electron/**/*"
     ],
     "dmg": {
-      "contents": [
-        {
+      "contents": [{
           "x": 410,
           "y": 150,
           "type": "link",

@@ -7,13 +7,13 @@ const {
   Tray,
   nativeImage,
   Notification,
-  autoUpdater
+  dialog
 } = require('electron')
 const ms = require('mediaserver')
 const fs = require('fs')
 const path = require('path')
 const http = require('http')
-const icon = path.join(__dirname, '../../build/icons/32.ico')
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -21,6 +21,8 @@ const icon = path.join(__dirname, '../../build/icons/32.ico')
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
+
+const icon = path.join(__static, '/icons/32.ico')
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
@@ -145,7 +147,7 @@ ipcMain.on('change_menu', (event, arg) => {
 
 // 格式化图片
 function formatImg (name) {
-  let url = path.join(__dirname, '../../build/icons/' + name)
+  let url = path.join(__static, '/icons/' + name)
   let result = nativeImage.createFromPath(url)
   return result.resize({
     width: 18,
@@ -240,43 +242,13 @@ function notFound (res) {
 // 桌面通知
 ipcMain.on('notification', (e) => {
   let notification = new Notification({
-    title: 'cesh2i',
+    title: 'ceshi',
     body: '正文',
     icon
   })
   console.log(Notification.isSupported())
   notification.show()
   e.returnValue = 200
-})
-
-// 自动更新-使用开源项目
-// require('update-electron-app')({
-//   repo: 'Hufe921/hufe-music',
-//   updateInterval: '5 minutes',
-//   logger: require('electron-log')
-// })
-const server = 'https://update.electronjs.org'
-const feed = `${server}/Hufe921/hufe-music/${process.platform}/${app.getVersion()}`
-console.log(feed)
-autoUpdater.setFeedURL(feed)
-autoUpdater.on('checking-for-update', () => {
-  console.log('开始检查')
-})
-
-autoUpdater.on('error', (error) => {
-  console.log(error)
-})
-
-autoUpdater.on('update-available', () => {
-  console.log('available')
-})
-
-autoUpdater.on('update-not-available', () => {
-  console.log('not-available')
-})
-
-autoUpdater.on('update-downloaded', (data) => {
-  console.log(data)
 })
 
 // /**
@@ -287,14 +259,51 @@ autoUpdater.on('update-downloaded', (data) => {
 //  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
 //  */
 
-// const { autoUpdater } = require('electron-updater')
+const { autoUpdater } = require('electron-updater')
 
-// autoUpdater.on('update-downloaded', () => {
-//   // autoUpdater.quitAndInstall()
-//   console.log('下载完成')
-// })
+const server = 'https://update.electronjs.org'
+const feed = `${server}/Hufe921/hufe-music/${process.platform}/${app.getVersion()}`
+autoUpdater.setFeedURL(feed)
+autoUpdater.updateConfigPath = path.join(__static, '/dev-app-update.yml')
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = false
 
-// app.on('ready', () => {
-//   // if (process.env.NODE_ENV === 'production')
-//   autoUpdater.checkForUpdates()
-// })
+autoUpdater.on('checking-for-update', () => {
+  console.log('开始检测更新')
+})
+
+autoUpdater.on('error', (error) => {
+  dialog.showMessageBox({ title: '提示', message: error, buttons: ['确定'] })
+})
+
+// 发现可用更新
+autoUpdater.on('update-available', () => {
+  dialog.showMessageBox({ title: '提示', message: '发现可用更新，是否立刻下载安装？', buttons: ['取消', '确定'] }, (res) => {
+    console.log(res)
+    if (res) {
+      autoUpdater.downloadUpdate()
+    }
+  })
+})
+
+autoUpdater.on('update-not-available', () => {
+  dialog.showMessageBox({ title: '提示', message: '暂时没有可用更新', buttons: ['确定'] })
+})
+
+// 下载完成
+autoUpdater.on('update-downloaded', (data) => {
+  console.log(data)
+  dialog.showMessageBox({ title: '提示', message: '是否下载完成，立刻重启安装？', buttons: ['取消', '确定'] }, (res) => {
+    if (res) {
+      // autoUpdater.quitAndInstall()
+      app.quit()
+    }
+  })
+})
+
+// 监控用户发起更新请求
+ipcMain.on('autoupdate', (e) => {
+  console.log('hufe')
+  autoUpdater.checkForUpdates()
+  e.returnValue = 200
+})

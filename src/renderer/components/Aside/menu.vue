@@ -3,7 +3,7 @@
        <div class="menu-group">
             <div class="menu-title">在线音乐</div>
             <div class="menu-item active"><i class="iconfont icon-yinle"></i>音乐馆</div>
-            <div class="menu-item"><i class="iconfont icon-mv"></i>MV</div>
+            <div class="menu-item" @click="$_autoupdate"><i class="iconfont icon-mv"></i>更新测试</div>
             <div class="menu-item" @click="$_notification"><i class="iconfont icon-diantai"></i>通知测试</div>
             <div class="menu-item" @click="$_print"><i class="iconfont icon-shoucang2"></i>打印测试</div>
        </div>
@@ -43,6 +43,10 @@
 export default {
   name: 'aside-menu',
   methods: {
+    // 自动更新测试
+    $_autoupdate () {
+      this.$electron.ipcRenderer.send('autoupdate')
+    },
     // 通知测试--html5的原生标签暂时无法使用
     $_notification () {
       // let notice = new Notification('状态更新提醒', {
